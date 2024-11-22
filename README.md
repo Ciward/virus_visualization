@@ -8,5 +8,5 @@ pip install -r requirements.txt
 ### Run Demo
 开启一个web服务, 通过网页访问
 ```
-python covid_model_vis.py --port 2233
+python virus_model_vis.py --port 2233
 ```
