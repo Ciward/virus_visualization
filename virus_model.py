@@ -15,11 +15,11 @@ model_params = {
     'width': 70,
     'height': 50,
     'infected_import': UserSettableParameter(
-        'slider', '每步输入阳性病例概率', 0.1, 0, 1, 0.05),
+        'slider', '每步输入阳性病例概率', 0.05, 0, 1, 0.05),
     'init_infected': UserSettableParameter(
-        'slider', '初始感染率 (百分比)', 0.2, 0, 1, 0.05),
+        'slider', '初始感染率 (百分比)', 0.05, 0, 1, 0.05),
     'perc_masked': UserSettableParameter(
-        'slider', '口罩普及率 (百分比)', 0.5, 0, 1, 0.05),
+        'slider', '口罩普及率 (百分比)', 0.3, 0, 1, 0.05),
     'prob_trans_masked': UserSettableParameter(
         'slider', '带口罩被传染概率', 0.25, 0, 1, 0.05),
     'prob_trans_unmasked': UserSettableParameter(
@@ -138,9 +138,7 @@ class VirusModel(Model):
         self.infected_import = infected_import
         self.schedule = RandomActivation(self)
         self.running = True
-
         self.deaths = 0
-
         # Create agents
         for i in range(self.no_agents):
             a = Agent(i, self)
