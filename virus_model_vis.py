@@ -8,7 +8,9 @@ def agent_portrayal(agent):
         'Shape': 'circle',
         'Layer': 0,
         'r': 0.6,
-        'Color': '#66F'}
+        'Color': '#66F',
+        'Filled': 'true'
+    }
 
     if agent.infected == True:
         portrayal['Color'] = '#F66'
@@ -21,13 +23,13 @@ def agent_portrayal(agent):
 
     return portrayal
 
-grid = CanvasGrid(agent_portrayal, 70, 50, 700, 500)
+grid = CanvasGrid(agent_portrayal, model_params['width'], model_params['height'], 1000, 700)
 
 line_charts = ChartModule(series = [
-    {'Label': '易感人群', 'Color': '#66F', 'Filled': 'false'}, 
-    {'Label': '感染人群', 'Color': '#F66', 'Filled': 'false'},
-    {'Label': '死亡人群', 'Color': 'black', 'Filled': 'false'},
-    {'Label': '痊愈及免疫人群', 'Color': '#6C6', 'Filled': 'false'}])
+    {'Label': '易感人群', 'Color': '#66F', 'Filled': 'true'}, 
+    {'Label': '感染人群', 'Color': '#F66', 'Filled': 'true'},
+    {'Label': '死亡人群', 'Color': 'black', 'Filled': 'true'},
+    {'Label': '痊愈及免疫人群', 'Color': '#6C6', 'Filled': 'true'}])
 
 server = ModularServer(VirusModel, [grid, line_charts], '病毒传播模拟', model_params)
 

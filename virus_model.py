@@ -12,8 +12,8 @@ import scipy.stats as ss
 model_params = {
     'no_agents': UserSettableParameter(
         'number', '模拟人数', 500, 5, 5000, 5),
-    'width': 70,
-    'height': 50,
+    'width': 100,
+    'height': 75,
     'infected_import': UserSettableParameter(
         'slider', '每步输入阳性病例概率', 0.05, 0, 1, 0.05),
     'init_infected': UserSettableParameter(
