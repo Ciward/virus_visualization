@@ -11,7 +11,7 @@ import scipy.stats as ss
 # -------------------------------------------------------------------------------------------
 model_params = {
     'no_agents': UserSettableParameter(
-        'number', '模拟人数', 500, 5, 5000, 5),
+        'number', '模拟人数', 1000, 5, 5000, 5),
     'width': 100,
     'height': 75,
     'infected_import': UserSettableParameter(
@@ -154,7 +154,8 @@ class VirusModel(Model):
             '易感人群': 'susceptible',
             '感染人群': 'infected',
             '死亡人群': 'death',
-            '痊愈及免疫人群': 'immune'})
+            '痊愈及免疫人群': 'immune',
+            '隔离人群': 'lockdown'})
 
     @property
     def susceptible(self):
@@ -177,6 +178,12 @@ class VirusModel(Model):
     @property
     def death(self):
         return self.deaths
+
+    @property
+    def lockdown(self):
+        agents = self.schedule.agents
+        lockdown = [a.lockdown for a in agents]
+        return int(np.sum(lockdown))
 
     def remove_deaths(self):
         for a in self.schedule.agents:

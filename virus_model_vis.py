@@ -19,7 +19,7 @@ def agent_portrayal(agent):
         portrayal['Color'] = '#6C6'
 
     if agent.lockdown == True:
-        portrayal['Filled'] = 'true'
+        portrayal['Filled'] = 'false'
 
     return portrayal
 
@@ -29,12 +29,14 @@ line_charts = ChartModule(series = [
     {'Label': '易感人群', 'Color': '#66F', 'Filled': 'true'}, 
     {'Label': '感染人群', 'Color': '#F66', 'Filled': 'true'},
     {'Label': '死亡人群', 'Color': 'black', 'Filled': 'true'},
-    {'Label': '痊愈及免疫人群', 'Color': '#6C6', 'Filled': 'true'}])
+    {'Label': '痊愈及免疫人群', 'Color': '#6C6', 'Filled': 'true'},
+    {'Label': '隔离人群', 'Color': '#6FF', 'Filled': 'false', 'r': 0.8}
+    ])
 
 server = ModularServer(VirusModel, [grid, line_charts], '病毒传播模拟', model_params)
 
 parser = argparse.ArgumentParser(description='Test for argparse')
-parser.add_argument('--port', '-n', help='name 端口，非必要参数', default=8521)
+parser.add_argument('--port', '-n', help='name 端口，非必要参数', default=2233)
 args = parser.parse_args()
 
 if __name__ == '__main__':
