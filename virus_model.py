@@ -15,23 +15,25 @@ model_params = {
     'width': 100,
     'height': 75,
     'infected_import': UserSettableParameter(
-        'slider', '每步输入阳性病例概率', 0.05, 0, 1, 0.05),
+        'slider', '每步输入阳性病例概率', 0.05, 0, 1, 0.05, description='dynamic'),
     'init_infected': UserSettableParameter(
         'slider', '初始感染率 (百分比)', 0.05, 0, 1, 0.05),
     'perc_masked': UserSettableParameter(
-        'slider', '口罩普及率 (百分比)', 0.3, 0, 1, 0.05),
+        'slider', '口罩普及率 (百分比)', 0.3, 0, 1, 0.05, description='dynamic'),
     'prob_trans_masked': UserSettableParameter(
-        'slider', '带口罩被传染概率', 0.25, 0, 1, 0.05),
+        'slider', '带口罩被传染概率', 0.25, 0, 1, 0.05, description='dynamic'),
     'prob_trans_unmasked': UserSettableParameter(
-        'slider', '不带口罩被传染概率', 0.75, 0, 1, 0.05),
+        'slider', '不带口罩被传染概率', 0.75, 0, 1, 0.05, description='dynamic'),
     'prob_fatal': UserSettableParameter(
-        'slider', '感染后转危重率', 0.1, 0, 1, 0.05),
+        'slider', '感染后转危重率', 0.1, 0, 1, 0.05, description='dynamic'),
     'infection_period': UserSettableParameter(
-        'slider', '感染到痊愈所需模拟步数', 50, 5, 200, 5),
+        'slider', '感染到痊愈所需模拟步数', 50, 5, 200, 5, description='dynamic'),
     'immunity_period': UserSettableParameter(
-        'slider', '免疫力消失所需模拟步数', 200, 10, 1000, 10),
+        'slider', '免疫力消失所需模拟步数', 200, 10, 1000, 10, description='dynamic'),
     'isolation_enabled': UserSettableParameter(
-        'choice', '是否实行隔离措施', value='否', choices=['否', '是'])
+        'checkbox', '是否实行隔离措施', value=False, description='dynamic'),
+    'center_lockdown': UserSettableParameter(
+        'checkbox', '是否实行集中隔离', value=False, description='dynamic')
 }
 
 
@@ -101,11 +103,14 @@ class Agent(Agent):
 
     def update_lockdown(self):
         # If lockdown enabled, the movement of infected agent will be limited
-        if (not self.infected | self.immune) or self.model.isolation_enabled == '否':
+        if ((not self.infected) or self.immune) or not self.model.isolation_enabled:
             self.lockdown = False
         else:
             # the probability 0.9 is a empiric parameter
-            self.lockdown = bool(ss.bernoulli.rvs(0.9))
+            self.lockdown = bool(ss.bernoulli.rvs(0.5))
+            if self.lockdown and self.model.center_lockdown and ss.bernoulli.rvs(0.5):
+                center_pos = (self.model.grid.width // 2, self.model.grid.height // 2)
+                self.model.grid.move_agent(self, center_pos)
 
     def step(self):
         self.move()
@@ -124,7 +129,7 @@ class VirusModel(Model):
     def __init__(self, no_agents, width, height,
                  init_infected, perc_masked, prob_trans_masked,
                  prob_trans_unmasked, infection_period, immunity_period, 
-                 isolation_enabled, prob_fatal, infected_import):
+                 isolation_enabled, prob_fatal, infected_import, center_lockdown):
         self.no_agents = no_agents
         self.grid = MultiGrid(width, height, False)
         self.init_infected = init_infected
@@ -136,6 +141,7 @@ class VirusModel(Model):
         self.isolation_enabled = isolation_enabled
         self.prob_fatal = prob_fatal
         self.infected_import = infected_import
+        self.center_lockdown = center_lockdown
         self.schedule = RandomActivation(self)
         self.running = True
         self.deaths = 0
@@ -185,6 +191,12 @@ class VirusModel(Model):
         lockdown = [a.lockdown for a in agents]
         return int(np.sum(lockdown))
 
+    def update_param(self, **kwargs):
+        for key, val in kwargs.items():
+            if key in self.__dict__:
+                setattr(self, key, val)
+        print("update_param")
+        
     def remove_deaths(self):
         for a in self.schedule.agents:
             if a.fatal and bool(ss.bernoulli.rvs(0.1)):
