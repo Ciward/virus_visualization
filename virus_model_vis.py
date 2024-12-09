@@ -82,9 +82,9 @@ def agent_portrayal(agent):
 
     if agent.lockdown == True:
         portrayal['Filled'] = 'false'
-        portrayal['Shape'] = 'rect'
-        portrayal['w'] = 0.6
-        portrayal['h'] = 0.6
+        # portrayal['Shape'] = 'rect'
+        # portrayal['w'] = 0.6
+        # portrayal['h'] = 0.6
         portrayal['Color'] = '#DD1' # 黄色
     return portrayal
 
