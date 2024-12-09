@@ -69,7 +69,9 @@ def agent_portrayal(agent):
         'Layer': 0,
         'r': 0.6,
         'Color': '#66F',
-        'Filled': 'true'
+        'Filled': 'true',
+        'masked': "戴口罩" if agent.masked == True else "未戴口罩",
+        'lockdown': "隔离" if agent.lockdown == True else "未隔离",
     }
 
     if agent.infected == True:
@@ -80,15 +82,17 @@ def agent_portrayal(agent):
 
     if agent.lockdown == True:
         portrayal['Filled'] = 'false'
-        portrayal['r'] = 0.8
-        portrayal['Layer'] = 1
+        portrayal['Shape'] = 'rect'
+        portrayal['w'] = 0.6
+        portrayal['h'] = 0.6
+        portrayal['Color'] = '#DD1' # 黄色
     return portrayal
 
 grid = CanvasGrid(agent_portrayal, model_params['width'], model_params['height'], 1000, 700)
 
 line_charts = ChartModule(series = [
     {'Label': '易感人群', 'Color': '#66F', 'Filled': 'true'}, 
-    {'Label': '隔离人群', 'Color': '#6FF', 'Filled': 'true'},
+    {'Label': '隔离人群', 'Color': '#DD1', 'Filled': 'true'},
     {'Label': '感染人群', 'Color': '#F66', 'Filled': 'true'},
     {'Label': '死亡人群', 'Color': 'black', 'Filled': 'true'},
     {'Label': '痊愈及免疫人群', 'Color': '#6C6', 'Filled': 'true'},
