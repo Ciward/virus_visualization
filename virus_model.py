@@ -195,6 +195,10 @@ class VirusModel(Model):
         for key, val in kwargs.items():
             if key in self.__dict__:
                 setattr(self, key, val)
+                # 如果参数属于 Agent 类的属性，也要更新所有 Agent 的属性
+                if key in ['perc_masked', 'prob_trans_masked', 'prob_trans_unmasked']:
+                    for agent in self.schedule.agents:
+                        setattr(agent, key, val)  # 更新每个代理人的属性
         print("update_param")
         
     def remove_deaths(self):
